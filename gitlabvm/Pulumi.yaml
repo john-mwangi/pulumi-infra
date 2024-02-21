@@ -1,0 +1,10 @@
+name: gitlabvm
+runtime:
+  name: python
+  # options:
+  #   virtualenv: venv
+description: GitLab deployment on Digital Ocean
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: digitalocean-python
