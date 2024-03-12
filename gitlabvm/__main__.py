@@ -28,16 +28,21 @@ def create_droplet(kwargs: dict, user_data: str = None):
 
 
 def resize_droplet(id: str, size: str):
-    """Resizes and existing droplet and retains the IPv4 address"""
-
+    """Resizes and existing droplet and retains the IPv4 address
+    **MIGRATE YOUR DATA FIRST**
+    """
+    
+    # Get existing droplet
     existing_droplet = do.Droplet.get("existing-droplet", id)
 
-    reserved_ip = do.ReservedIp(
+    # Get existing static ip
+    existing_reserved_ip = do.ReservedIp(
         "reserved-ip",
         droplet_id=existing_droplet.id,
         region=existing_droplet.region,
     )
 
+    # Create a new droplet
     new_droplet = do.Droplet(
         "gitlab-server",
         image=existing_droplet.image,
@@ -47,14 +52,15 @@ def resize_droplet(id: str, size: str):
         tags=existing_droplet.tags,
     )
 
-    reserved_ip_assign = do.ReservedIpAssignment(
-        "reserved-ip-assign",
+    # Reassign the existing IP to the new droplet
+    reassigned_ip = do.ReservedIpAssignment(
+        "reassign-ip",
         droplet_id=new_droplet.id,
-        ip_address=reserved_ip.ip_address,
+        ip_address=existing_reserved_ip.ip_address,
     )
 
     pulumi.export("vm_ip", new_droplet.ipv4_address)
-    pulumi.export("static_ip", reserved_ip_assign.ip_address)
+    pulumi.export("static_ip", reassigned_ip.ip_address)
     pulumi.export("monthly_price_usd", new_droplet.price_monthly)
     pulumi.export("disk_size", new_droplet.disk)
     pulumi.export("ram", new_droplet.memory)
