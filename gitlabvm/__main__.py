@@ -32,11 +32,8 @@ def resize_droplet(id: str, size: str):
 
     existing_droplet = do.Droplet.get("existing-droplet", id)
 
-    reserved_ip = do.ReservedIp(
-        "reserved-ip",
-        droplet_id=existing_droplet.id,
-        region=existing_droplet.region,
-    )
+    # https://docs.digitalocean.com/products/networking/reserved-ips/how-to/modify/
+    existing_reserved_ip = do.ReservedIp.get("existing-reserved-ip", id)
 
     new_droplet = do.Droplet(
         "gitlab-server",
@@ -50,7 +47,7 @@ def resize_droplet(id: str, size: str):
     reserved_ip_assign = do.ReservedIpAssignment(
         "reserved-ip-assign",
         droplet_id=new_droplet.id,
-        ip_address=reserved_ip.ip_address,
+        ip_address=existing_reserved_ip.ip_address,
     )
 
     pulumi.export("vm_ip", new_droplet.ipv4_address)
@@ -86,4 +83,4 @@ if __name__ == "__main__":
     }
 
     # create_droplet(kwargs, user_data=install_gitlab)
-    resize_droplet(id=os.environ["DROPLET_ID"], size="s-4vcpu-8gb")
+    # resize_droplet(id=os.environ["DROPLET_ID"], size="s-4vcpu-8gb")
