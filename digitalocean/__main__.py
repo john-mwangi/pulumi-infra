@@ -34,7 +34,7 @@ def create_droplet(kwargs: dict, user_data: str = None):
 
 
 def resize_droplet(id: str, size: str, droplet_name: str):
-    """Resizes and existing droplet and retains the IPv4 address.
+    """Resizes an existing droplet and retains the IPv4 address.
 
     Args:
     ---
@@ -52,7 +52,7 @@ def resize_droplet(id: str, size: str, droplet_name: str):
     # Get existing droplet
     existing_droplet = do.Droplet.get("existing-droplet", id)
 
-    # Get reserved ip of the droplet
+    # Get reserved ip of the existing droplet
     # https://docs.digitalocean.com/products/networking/reserved-ips/how-to/modify/
     existing_reserved_ip = do.ReservedIp.get("existing-reserved-ip", id)
     existing_reserved_ip.ip_address.apply(lambda ip: print("static_ip:", ip))
