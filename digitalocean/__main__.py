@@ -6,7 +6,13 @@ import pulumi
 
 
 def create_droplet(kwargs: dict, user_data: str = None):
-    """Creates a virtual machine on Digital Ocean"""
+    """Creates a virtual machine on Digital Ocean
+
+    Args:
+    ---
+    kwargs: key-word arguments for Droplet params
+    user_data: install script to run on the Linux machine
+    """
 
     vm = do.Droplet(
         **kwargs,
@@ -28,9 +34,19 @@ def create_droplet(kwargs: dict, user_data: str = None):
 
 
 def resize_droplet(id: str, size: str):
-    """Resizes and existing droplet and retains the IPv4 address
-    **MIGRATE YOUR DATA FIRST**
+    """Resizes and existing droplet and retains the IPv4 address.
+
+    Args:
+    ---
+    id: The id of the Droplet to resize
+    size: The new slug
     """
+
+    is_backed_up = input("Have you backed-up data from this VM? [y/n]")
+
+    if is_backed_up.lower().strip() != "y":
+        print("Back-up the data from the VM first")
+        exit(0)
 
     # Get existing droplet
     existing_droplet = do.Droplet.get("existing-droplet", id)
