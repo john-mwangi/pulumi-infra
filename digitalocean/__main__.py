@@ -1,4 +1,4 @@
-"""Spins a GitLab instance on Pulumi"""
+"""Spins a GitLab instance on DigitalOcean"""
 
 import pulumi_digitalocean as do
 
