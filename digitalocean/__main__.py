@@ -42,10 +42,10 @@ def resize_droplet(id: str, size: str):
     size: The new slug
     """
 
-    is_backed_up = input("Have you backed-up data from this VM? [y/n]")
+    is_backed_up = input("Have you backed up data from this VM? [y/n]")
 
     if is_backed_up.lower().strip() != "y":
-        print("Back-up the data from the VM first")
+        print("Back up the data from the VM first")
         exit(0)
 
     # Get existing droplet
