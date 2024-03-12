@@ -38,7 +38,6 @@ def resize_droplet(id: str, size: str):
     # Get reserved ip of the droplet
     # https://docs.digitalocean.com/products/networking/reserved-ips/how-to/modify/
     existing_reserved_ip = do.ReservedIp.get("existing-reserved-ip", id)
-
     existing_reserved_ip.ip_address.apply(lambda ip: print("static_ip:", ip))
 
     # Create a new droplet
