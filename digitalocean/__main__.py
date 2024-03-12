@@ -33,13 +33,14 @@ def create_droplet(kwargs: dict, user_data: str = None):
     pulumi.export("ram", vm.memory)
 
 
-def resize_droplet(id: str, size: str):
+def resize_droplet(id: str, size: str, droplet_name: str):
     """Resizes and existing droplet and retains the IPv4 address.
 
     Args:
     ---
     id: The id of the Droplet to resize
     size: The new slug
+    droplet_name: The resource name to assign the new Droplet
     """
 
     is_backed_up = input("Have you backed up data from this VM? [y/n]")
@@ -58,7 +59,7 @@ def resize_droplet(id: str, size: str):
 
     # Create a new droplet
     new_droplet = do.Droplet(
-        "gitlab-server",
+        resource_name=droplet_name,
         image=existing_droplet.image,
         size=size,
         region=existing_droplet.region,
@@ -106,4 +107,8 @@ if __name__ == "__main__":
     }
 
     # create_droplet(kwargs, user_data=install_gitlab)
-    resize_droplet(id=os.environ["DROPLET_ID"], size="s-4vcpu-8gb")
+    resize_droplet(
+        id=os.environ["DROPLET_ID"],
+        size="s-4vcpu-8gb",
+        droplet_name="gitlab-server",
+    )
