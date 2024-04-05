@@ -1,11 +1,16 @@
 """Spins a GitLab instance on DigitalOcean"""
 
+import os
+
 import pulumi_digitalocean as do
+from dotenv import load_dotenv
 
 import pulumi
 
+load_dotenv()
 
-def create_droplet(kwargs: dict, user_data: str = None):
+
+def create_droplet(kwargs: dict, id: str, user_data: str = None):
     """Creates a virtual machine on Digital Ocean
 
     Args:
@@ -33,7 +38,9 @@ def create_droplet(kwargs: dict, user_data: str = None):
     pulumi.export("ram", vm.memory)
 
 
-def resize_droplet(id: str, size: str, droplet_name: str):
+def resize_droplet(
+    id: str, size: str, droplet_name: str, is_backed_up: bool = False
+):
     """Resizes an existing droplet and retains the IPv4 address.
 
     Args:
@@ -43,9 +50,7 @@ def resize_droplet(id: str, size: str, droplet_name: str):
     droplet_name: The resource name to assign the new Droplet
     """
 
-    is_backed_up = input("Have you backed up data from this VM? [y/n]")
-
-    if is_backed_up.lower().strip() != "y":
+    if not is_backed_up:
         print("Back up the data from the VM first")
         exit(0)
 
@@ -54,7 +59,9 @@ def resize_droplet(id: str, size: str, droplet_name: str):
 
     # Get reserved ip of the existing droplet
     # https://docs.digitalocean.com/products/networking/reserved-ips/how-to/modify/
-    existing_reserved_ip = do.ReservedIp.get("existing-reserved-ip", id)
+    existing_reserved_ip = do.ReservedIp.get(
+        "existing-reserved-ip", os.environ["VM_STATIC_IP"]
+    )
     existing_reserved_ip.ip_address.apply(lambda ip: print("static_ip:", ip))
 
     # Create a new droplet
@@ -81,12 +88,29 @@ def resize_droplet(id: str, size: str, droplet_name: str):
     pulumi.export("ram", new_droplet.memory)
 
 
+def create_database_instance(size: str, version: str):
+    """Creates a database instance"""
+
+    credit_risk_spec = do.DatabaseCluster(
+        resource_name="credit-risk-spec",
+        engine="pg",
+        node_count=1,
+        region="ams3",
+        size=size,
+        version=version,
+    )
+
+    credit_risk_db = do.DatabaseDb(
+        resource_name="credit-risk-db", cluster_id=credit_risk_spec.id
+    )
+
+    pulumi.export("resource_id_spec", credit_risk_spec.id)
+    pulumi.export("resource_id_db", credit_risk_db.id)
+    pulumi.export("db_user", credit_risk_spec.user)
+    pulumi.export("db_port", credit_risk_spec.port)
+
+
 if __name__ == "__main__":
-    import os
-
-    from dotenv import load_dotenv
-
-    load_dotenv()
 
     # ref: https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-gitlab-on-ubuntu-20-04
     install_gitlab = """#!/bin/bash
@@ -106,9 +130,15 @@ if __name__ == "__main__":
         "image": "ubuntu-20-04-x64",
     }
 
-    # create_droplet(kwargs, user_data=install_gitlab)
-    resize_droplet(
-        id=os.environ["DROPLET_ID"],
-        size="s-4vcpu-8gb",
-        droplet_name="gitlab-server",
+    create_droplet(
+        kwargs, id=os.environ["DROPLET_ID"], user_data=install_gitlab
     )
+
+    # resize_droplet(
+    #     id=os.environ["DROPLET_ID"],
+    #     size="s-4vcpu-8gb",
+    #     droplet_name="new-gitlab-server",
+    #     is_backed_up=True,
+    # )
+
+    create_database_instance(size="db-s-2vcpu-4gb", version="13")
