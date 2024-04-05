@@ -101,13 +101,16 @@ def create_database_instance(size: str, version: str):
     )
 
     credit_risk_db = do.DatabaseDb(
-        resource_name="credit-risk-db", cluster_id=credit_risk_spec.id
+        resource_name="credit-risk-db",
+        cluster_id=credit_risk_spec.id,
+        name=os.environ["DB_NAME"],
     )
 
     pulumi.export("resource_id_spec", credit_risk_spec.id)
     pulumi.export("resource_id_db", credit_risk_db.id)
     pulumi.export("db_user", credit_risk_spec.user)
     pulumi.export("db_port", credit_risk_spec.port)
+    pulumi.export("db_name", credit_risk_db.name)
 
 
 if __name__ == "__main__":
