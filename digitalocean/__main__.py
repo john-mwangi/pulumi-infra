@@ -1,4 +1,4 @@
-"""Spins resources on DigitalOcean"""
+"""Spins resources on Digital Ocean"""
 
 import os
 
