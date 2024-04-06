@@ -103,7 +103,7 @@ def create_postgres_db(size: str):
     crdb = do.DatabaseDb(
         resource_name="crdb",
         cluster_id=pg13_cluster.id,
-        name=os.environ["DB_NAME"],
+        name=os.environ["CR_DB_NAME"],
     )
 
     pulumi.export("resource_id_spec", pg13_cluster.id)
@@ -127,7 +127,6 @@ def main(
     gitlab_script: script to use to install GitLab
     """
 
-    # ref: https://slugs.do-api.dev/
     create_droplet(gitlab_kwargs, user_data=gitlab_script)
 
     if droplet_to_resize is not None:
@@ -153,6 +152,7 @@ if __name__ == "__main__":
     docker run -d -p 443:443 -p 80:80 -p 23:22 --name gitlab_instance gitlab/gitlab-ce:latest
     """
 
+    # ref: https://slugs.do-api.dev/
     gitlab_params = {
         "resource_name": "gitlab-server",
         "size": "s-4vcpu-8gb",
