@@ -1,4 +1,4 @@
-"""Spins a GitLab instance on DigitalOcean"""
+"""Spins resources on DigitalOcean"""
 
 import os
 
@@ -41,7 +41,7 @@ def create_droplet(kwargs: dict, id: str, user_data: str = None):
 def resize_droplet(
     id: str, size: str, droplet_name: str, is_backed_up: bool = False
 ):
-    """Resizes an existing droplet and retains the IPv4 address.
+    """Resizes an existing virtual machine and retains the IPv4 address.
 
     Args:
     ---
@@ -88,8 +88,8 @@ def resize_droplet(
     pulumi.export("ram", new_droplet.memory)
 
 
-def create_postgres_db_instance(size: str):
-    """Creates a Postgres database instance"""
+def create_postgres_db(size: str):
+    """Creates a Postgres database"""
 
     pg13_cluster = do.DatabaseCluster(
         resource_name="pg13-cluster",
@@ -115,7 +115,13 @@ def create_postgres_db_instance(size: str):
     pulumi.export("db_version", pg13_cluster.version)
 
 
-if __name__ == "__main__":
+def main(droplet_kwargs: dict, droplet_to_resize: str = None):
+    """Create Digital Ocean resources.
+
+    Args:
+    ---
+    droplet_to_resize: id of the droplet to be resized
+    """
 
     # ref: https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-gitlab-on-ubuntu-20-04
     install_gitlab = """#!/bin/bash
@@ -128,22 +134,28 @@ if __name__ == "__main__":
     """
 
     # ref: https://slugs.do-api.dev/
-    kwargs = {
+    create_droplet(
+        droplet_kwargs, id=os.environ["DROPLET_ID"], user_data=install_gitlab
+    )
+
+    if droplet_to_resize is not None:
+        resize_droplet(
+            id=droplet_to_resize,
+            size="s-4vcpu-8gb",
+            droplet_name="new-gitlab-server",
+            is_backed_up=True,
+        )
+
+    create_postgres_db(size="db-s-2vcpu-4gb")
+
+
+if __name__ == "__main__":
+
+    gitlab_kwargs = {
         "resource_name": "gitlab-server",
         "size": "s-4vcpu-8gb",
         "region": "ams3",
         "image": "ubuntu-20-04-x64",
     }
 
-    create_droplet(
-        kwargs, id=os.environ["DROPLET_ID"], user_data=install_gitlab
-    )
-
-    # resize_droplet(
-    #     id=os.environ["DROPLET_ID"],
-    #     size="s-4vcpu-8gb",
-    #     droplet_name="new-gitlab-server",
-    #     is_backed_up=True,
-    # )
-
-    create_postgres_db_instance(size="db-s-2vcpu-4gb")
+    main(droplet_kwargs=gitlab_kwargs)
