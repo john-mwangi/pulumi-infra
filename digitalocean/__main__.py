@@ -10,7 +10,7 @@ import pulumi
 load_dotenv()
 
 
-def create_droplet(kwargs: dict, id: str, user_data: str = None):
+def create_droplet(kwargs: dict, user_data: str = None):
     """Creates a virtual machine on Digital Ocean
 
     Args:
@@ -115,13 +115,33 @@ def create_postgres_db(size: str):
     pulumi.export("db_version", pg13_cluster.version)
 
 
-def main(droplet_kwargs: dict, droplet_to_resize: str = None):
+def main(
+    gitlab_kwargs: dict, gitlab_script: str, droplet_to_resize: str = None
+):
     """Create Digital Ocean resources.
 
     Args:
     ---
     droplet_to_resize: id of the droplet to be resized
+    gitlab_kwargs: parameters to use to create the GitLab VM
+    gitlab_script: script to use to install GitLab
     """
+
+    # ref: https://slugs.do-api.dev/
+    create_droplet(gitlab_kwargs, user_data=gitlab_script)
+
+    if droplet_to_resize is not None:
+        resize_droplet(
+            id=droplet_to_resize,
+            size="s-4vcpu-8gb",
+            droplet_name="gitlab-server",
+            is_backed_up=False,
+        )
+
+    create_postgres_db(size="db-s-2vcpu-4gb")
+
+
+if __name__ == "__main__":
 
     # ref: https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-gitlab-on-ubuntu-20-04
     install_gitlab = """#!/bin/bash
@@ -133,29 +153,11 @@ def main(droplet_kwargs: dict, droplet_to_resize: str = None):
     docker run -d -p 443:443 -p 80:80 -p 23:22 --name gitlab_instance gitlab/gitlab-ce:latest
     """
 
-    # ref: https://slugs.do-api.dev/
-    create_droplet(
-        droplet_kwargs, id=os.environ["DROPLET_ID"], user_data=install_gitlab
-    )
-
-    if droplet_to_resize is not None:
-        resize_droplet(
-            id=droplet_to_resize,
-            size="s-4vcpu-8gb",
-            droplet_name="new-gitlab-server",
-            is_backed_up=True,
-        )
-
-    create_postgres_db(size="db-s-2vcpu-4gb")
-
-
-if __name__ == "__main__":
-
-    gitlab_kwargs = {
+    gitlab_params = {
         "resource_name": "gitlab-server",
         "size": "s-4vcpu-8gb",
         "region": "ams3",
         "image": "ubuntu-20-04-x64",
     }
 
-    main(droplet_kwargs=gitlab_kwargs)
+    main(gitlab_kwargs=gitlab_params, gitlab_script=install_gitlab)
