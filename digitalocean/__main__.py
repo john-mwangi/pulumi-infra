@@ -88,29 +88,31 @@ def resize_droplet(
     pulumi.export("ram", new_droplet.memory)
 
 
-def create_database_instance(size: str, version: str):
-    """Creates a database instance"""
+def create_postgres_db_instance(size: str):
+    """Creates a Postgres database instance"""
 
-    credit_risk_spec = do.DatabaseCluster(
-        resource_name="credit-risk-spec",
+    pg13_cluster = do.DatabaseCluster(
+        resource_name="pg13-cluster",
         engine="pg",
-        node_count=1,
+        version="13",
         region="ams3",
+        node_count=1,
         size=size,
-        version=version,
     )
 
-    credit_risk_db = do.DatabaseDb(
-        resource_name="credit-risk-db",
-        cluster_id=credit_risk_spec.id,
+    crdb = do.DatabaseDb(
+        resource_name="crdb",
+        cluster_id=pg13_cluster.id,
         name=os.environ["DB_NAME"],
     )
 
-    pulumi.export("resource_id_spec", credit_risk_spec.id)
-    pulumi.export("resource_id_db", credit_risk_db.id)
-    pulumi.export("db_user", credit_risk_spec.user)
-    pulumi.export("db_port", credit_risk_spec.port)
-    pulumi.export("db_name", credit_risk_db.name)
+    pulumi.export("resource_id_spec", pg13_cluster.id)
+    pulumi.export("resource_id_db", crdb.id)
+    pulumi.export("db_user", pg13_cluster.user)
+    pulumi.export("db_port", pg13_cluster.port)
+    pulumi.export("db_name", crdb.name)
+    pulumi.export("db_engine", pg13_cluster.engine)
+    pulumi.export("db_version", pg13_cluster.version)
 
 
 if __name__ == "__main__":
@@ -144,4 +146,4 @@ if __name__ == "__main__":
     #     is_backed_up=True,
     # )
 
-    create_database_instance(size="db-s-2vcpu-4gb", version="13")
+    create_postgres_db_instance(size="db-s-2vcpu-4gb")
