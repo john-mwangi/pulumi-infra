@@ -1,6 +1,7 @@
 """Spins resources on Digital Ocean"""
 
 import os
+from functools import reduce
 
 import pulumi_digitalocean as do
 from dotenv import load_dotenv
@@ -10,20 +11,15 @@ import pulumi
 load_dotenv()
 
 
-def create_droplet(kwargs: dict, user_data: str = None):
+def create_droplet(kwargs: dict):
     """Creates a virtual machine on Digital Ocean
 
     Args:
     ---
     kwargs: key-word arguments for Droplet params
-    user_data: install script to run on the Linux machine
     """
 
-    vm = do.Droplet(
-        **kwargs,
-        resize_disk=False,
-        user_data=user_data,
-    )
+    vm = do.Droplet(**kwargs)
 
     reserved_ip = do.ReservedIp(
         "reserved_ip",
@@ -115,29 +111,22 @@ def create_postgres_db(size: str):
     pulumi.export("db_version", pg13_cluster.version)
 
 
-def main(
-    gitlab_kwargs: dict, gitlab_script: str, droplet_to_resize: str = None
-):
+def main(main_params: dict):
     """Create Digital Ocean resources.
 
     Args:
     ---
-    droplet_to_resize: id of the droplet to be resized
-    gitlab_kwargs: parameters to use to create the GitLab VM
-    gitlab_script: script to use to install GitLab
+    main_params: the parameters to use
     """
 
-    create_droplet(gitlab_kwargs, user_data=gitlab_script)
+    create_droplet(kwargs=main_params.get("gitlab_droplet_params"))
 
+    droplet_to_resize = reduce(dict.get, ["resize_gitlab", "id"], main_params)
     if droplet_to_resize is not None:
-        resize_droplet(
-            id=droplet_to_resize,
-            size="s-4vcpu-8gb",
-            droplet_name="gitlab-server",
-            is_backed_up=False,
-        )
+        resize_droplet(**main_params.get("resize_gitlab"))
 
-    create_postgres_db(size="db-s-2vcpu-4gb")
+    pg_size = reduce(dict.get, ["pg_db_params", "size"], main_params)
+    create_postgres_db(size=pg_size)
 
 
 if __name__ == "__main__":
@@ -153,11 +142,28 @@ if __name__ == "__main__":
     """
 
     # ref: https://slugs.do-api.dev/
-    gitlab_params = {
+    gitlab_droplet_params = {
         "resource_name": "gitlab-server",
         "size": "s-4vcpu-8gb",
         "region": "ams3",
         "image": "ubuntu-20-04-x64",
+        "user_data": install_gitlab,
+        "resize_disk": False,
     }
 
-    main(gitlab_kwargs=gitlab_params, gitlab_script=install_gitlab)
+    resize_gitlab = {
+        "id": None,
+        "size": "s-4vcpu-8gb",
+        "droplet_name": "gitlab-server",
+        "is_backed_up": False,
+    }
+
+    pg_db_params = {"size": "db-s-2vcpu-4gb"}
+
+    main_params = {
+        "gitlab_droplet_params": gitlab_droplet_params,
+        "resize_gitlab": resize_gitlab,
+        "pg_db_params": pg_db_params,
+    }
+
+    main(main_params)
