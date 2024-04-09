@@ -111,6 +111,51 @@ def create_postgres_db(size: str):
     pulumi.export("db_version", pg13_cluster.version)
 
 
+def create_bucket(bucket_params: dict):
+    """Creates a Spaces bucket.
+
+    Args
+    ---
+    bucket_params: a dictionary of values to pass to do.SpacesBucket()
+    """
+
+    provider = do.Provider(
+        resource_name="bucket-provider",
+        spaces_access_id=os.environ["SPACES_ACCESS_KEY_ID"],
+        spaces_secret_key=os.environ["SPACES_SECRET_ACCESS_KEY"],
+    )
+
+    # ref: https://www.pulumi.com/registry/packages/digitalocean/api-docs/spacesbucket/
+    outsystems_bucket = do.SpacesBucket(
+        **bucket_params, opts=pulumi.ResourceOptions(provider=provider)
+    )
+
+    outsystems_bucket_cors = do.SpacesBucketCorsConfiguration(
+        resource_name="outsystems-bucket-cors",
+        bucket=outsystems_bucket.id,
+        region="ams3",
+        cors_rules=[
+            do.SpacesBucketCorsConfigurationCorsRuleArgs(
+                allowed_headers=["*"],
+                allowed_methods=["POST", "PUT", "DELETE"],
+                allowed_origins=["*"],
+                max_age_seconds=3000,
+            ),
+            do.SpacesBucketCorsConfigurationCorsRuleArgs(
+                allowed_headers=["*"],
+                allowed_methods=["GET"],
+                allowed_origins=["*"],
+                max_age_seconds=3000,
+            ),
+        ],
+    )
+
+    pulumi.export("outsystems_bucket_id", outsystems_bucket.id)
+    pulumi.export("outsystems_bucket_cors_id", outsystems_bucket_cors.id)
+    pulumi.export("os_bucket_domain", outsystems_bucket.bucket_domain_name)
+    pulumi.export("outsystems_bucket_endpoint", outsystems_bucket.endpoint)
+
+
 def main(main_params: dict):
     """Create Digital Ocean resources.
 
@@ -127,6 +172,8 @@ def main(main_params: dict):
 
     pg_size = reduce(dict.get, ["pg_db_params", "size"], main_params)
     create_postgres_db(size=pg_size)
+
+    create_bucket(bucket_params=main_params.get("outsystems_bucket_params"))
 
 
 if __name__ == "__main__":
@@ -160,10 +207,19 @@ if __name__ == "__main__":
 
     pg_db_params = {"size": "db-s-2vcpu-4gb"}
 
+    outsystems_bucket_params = {
+        "resource_name": "outsystems-bucket",
+        "name": "outsystems-backups",
+        "region": "ams3",
+        "acl": "private",
+        "force_destroy": False,
+    }
+
     main_params = {
         "gitlab_droplet_params": gitlab_droplet_params,
         "resize_gitlab": resize_gitlab,
         "pg_db_params": pg_db_params,
+        "outsystems_bucket_params": outsystems_bucket_params,
     }
 
     main(main_params)
