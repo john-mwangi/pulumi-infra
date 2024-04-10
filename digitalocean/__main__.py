@@ -206,7 +206,7 @@ if __name__ == "__main__":
 
     outsystems_bucket_params = {
         "resource_name": "outsystems-bucket",
-        "name": "outsystems-backups",
+        "name": "outsystems-bucket",
         "region": REGION,
         "acl": "private",
         "force_destroy": False,
@@ -214,7 +214,7 @@ if __name__ == "__main__":
 
     pyxis_bucket_params = {
         "resource_name": "pyxis-bucket",
-        "name": "pyxis-backups",
+        "name": "pyxis-bucket",
         "region": REGION,
         "acl": "private",
         "force_destroy": False,
