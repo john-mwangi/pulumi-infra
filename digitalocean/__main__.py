@@ -10,6 +10,8 @@ import pulumi
 
 load_dotenv()
 
+REGION = "ams3"
+
 
 def create_droplet(kwargs: dict):
     """Creates a virtual machine on Digital Ocean
@@ -91,7 +93,7 @@ def create_postgres_db(size: str):
         resource_name="pg13-cluster",
         engine="pg",
         version="13",
-        region="ams3",
+        region=REGION,
         node_count=1,
         size=size,
     )
@@ -133,7 +135,7 @@ def create_bucket(bucket_params: dict):
     outsystems_bucket_cors = do.SpacesBucketCorsConfiguration(
         resource_name="outsystems-bucket-cors",
         bucket=outsystems_bucket.id,
-        region="ams3",
+        region=REGION,
         cors_rules=[
             do.SpacesBucketCorsConfigurationCorsRuleArgs(
                 allowed_headers=["*"],
@@ -192,7 +194,7 @@ if __name__ == "__main__":
     gitlab_droplet_params = {
         "resource_name": "gitlab-server",
         "size": "s-4vcpu-8gb",
-        "region": "ams3",
+        "region": REGION,
         "image": "ubuntu-20-04-x64",
         "user_data": install_gitlab,
         "resize_disk": False,
@@ -210,7 +212,7 @@ if __name__ == "__main__":
     outsystems_bucket_params = {
         "resource_name": "outsystems-bucket",
         "name": "outsystems-backups",
-        "region": "ams3",
+        "region": REGION,
         "acl": "private",
         "force_destroy": False,
     }
