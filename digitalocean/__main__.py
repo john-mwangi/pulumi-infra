@@ -127,7 +127,7 @@ def create_bucket(bucket_params: dict):
     bucket_name = bucket_params.get("name")
 
     bucket_cors = do.SpacesBucketCorsConfiguration(
-        resource_name=f"{bucket_name}-bucket-cors",
+        resource_name=f"{bucket_name}-cors",
         bucket=bucket.id,
         region=REGION,
         cors_rules=[
