@@ -10,6 +10,7 @@ import pulumi
 
 load_dotenv()
 
+# All resources will be in the same region
 REGION = "ams3"
 
 
@@ -152,6 +153,20 @@ def create_bucket(bucket_params: dict):
     pulumi.export("bucket_endpoint", bucket.endpoint)
 
 
+def import_bucket(bucket_name: str):
+    """Imports a bucket into the Pulumi stack that was created via the Digital
+    Ocean console"""
+
+    bucket = do.SpacesBucket(
+        bucket_name,
+        name=bucket_name,
+        region=REGION,
+        opts=pulumi.ResourceOptions(import_=f"{REGION},{bucket_name}"),
+    )
+
+    pulumi.export("bucket_id", bucket.id)
+
+
 def main(main_params: dict):
     """Create Digital Ocean resources.
 
@@ -169,6 +184,7 @@ def main(main_params: dict):
     pg_size = reduce(dict.get, ["pg_db_params", "size"], main_params)
     create_postgres_db(size=pg_size)
 
+    # import_bucket("pyxis-bucket")
     create_bucket(bucket_params=main_params.get("outsystems_bucket_params"))
     create_bucket(bucket_params=main_params.get("pyxis_bucket_params"))
 
