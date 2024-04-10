@@ -121,20 +121,14 @@ def create_bucket(bucket_params: dict):
     bucket_params: a dictionary of values to pass to do.SpacesBucket()
     """
 
-    provider = do.Provider(
-        resource_name="bucket-provider",
-        spaces_access_id=os.environ["SPACES_ACCESS_KEY_ID"],
-        spaces_secret_key=os.environ["SPACES_SECRET_ACCESS_KEY"],
-    )
-
     # ref: https://www.pulumi.com/registry/packages/digitalocean/api-docs/spacesbucket/
-    outsystems_bucket = do.SpacesBucket(
-        **bucket_params, opts=pulumi.ResourceOptions(provider=provider)
-    )
+    bucket = do.SpacesBucket(**bucket_params)
 
-    outsystems_bucket_cors = do.SpacesBucketCorsConfiguration(
-        resource_name="outsystems-bucket-cors",
-        bucket=outsystems_bucket.id,
+    bucket_name = bucket_params.get("name")
+
+    bucket_cors = do.SpacesBucketCorsConfiguration(
+        resource_name=f"{bucket_name}-bucket-cors",
+        bucket=bucket.id,
         region=REGION,
         cors_rules=[
             do.SpacesBucketCorsConfigurationCorsRuleArgs(
@@ -152,10 +146,10 @@ def create_bucket(bucket_params: dict):
         ],
     )
 
-    pulumi.export("outsystems_bucket_id", outsystems_bucket.id)
-    pulumi.export("outsystems_bucket_cors_id", outsystems_bucket_cors.id)
-    pulumi.export("os_bucket_domain", outsystems_bucket.bucket_domain_name)
-    pulumi.export("outsystems_bucket_endpoint", outsystems_bucket.endpoint)
+    pulumi.export("bucket_id", bucket.id)
+    pulumi.export("bucket_cors_id", bucket_cors.id)
+    pulumi.export("bucket_domain", bucket.bucket_domain_name)
+    pulumi.export("bucket_endpoint", bucket.endpoint)
 
 
 def main(main_params: dict):
@@ -176,6 +170,7 @@ def main(main_params: dict):
     create_postgres_db(size=pg_size)
 
     create_bucket(bucket_params=main_params.get("outsystems_bucket_params"))
+    create_bucket(bucket_params=main_params.get("pyxis_bucket_params"))
 
 
 if __name__ == "__main__":
@@ -217,11 +212,20 @@ if __name__ == "__main__":
         "force_destroy": False,
     }
 
+    pyxis_bucket_params = {
+        "resource_name": "pyxis-bucket",
+        "name": "pyxis-backups",
+        "region": REGION,
+        "acl": "private",
+        "force_destroy": False,
+    }
+
     main_params = {
         "gitlab_droplet_params": gitlab_droplet_params,
         "resize_gitlab": resize_gitlab,
         "pg_db_params": pg_db_params,
         "outsystems_bucket_params": outsystems_bucket_params,
+        "pyxis_bucket_params": pyxis_bucket_params,
     }
 
     main(main_params)
