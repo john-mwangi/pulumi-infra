@@ -3,10 +3,8 @@
 import os
 from functools import reduce
 
-import params
 import pulumi_digitalocean as do
 from dotenv import load_dotenv
-from params import REGION
 
 import pulumi
 
@@ -189,13 +187,11 @@ def main(main_params: dict):
 
 
 if __name__ == "__main__":
+    import yaml
 
-    main_params = {
-        "gitlab_droplet_params": params.gitlab_droplet_params,
-        "resize_gitlab": params.resize_gitlab,
-        "pg_db_params": params.pg_db_params,
-        "outsystems_bucket_params": params.outsystems_bucket_params,
-        "pyxis_bucket_params": params.pyxis_bucket_params,
-    }
+    with open("params.yaml", "r") as f:
+        params = yaml.safe_load(f)
 
-    main(main_params)
+    REGION = params["REGION"]
+
+    main(params)

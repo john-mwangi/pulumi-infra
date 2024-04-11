@@ -1,0 +1,41 @@
+REGION: ams3
+gitlab_droplet_params:
+  image: ubuntu-20-04-x64
+  region: ams3
+  resize_disk: false
+  resource_name: gitlab-server
+  size: s-4vcpu-8gb
+  user_data: '#!/bin/bash
+
+    sudo ufw allow http
+
+    sudo ufw allow https
+
+    sudo ufw allow OpenSSH
+
+    curl -fsSL https://get.docker.com/ | sh
+
+    docker system prune --all -f
+
+    docker run -d -p 443:443 -p 80:80 -p 23:22 --name gitlab_instance gitlab/gitlab-ce:latest
+
+    '
+outsystems_bucket_params:
+  acl: private
+  force_destroy: false
+  name: outsystems-bucket
+  region: ams3
+  resource_name: outsystems-bucket
+pg_db_params:
+  size: db-s-2vcpu-4gb
+pyxis_bucket_params:
+  acl: private
+  force_destroy: false
+  name: pyxis-bucket
+  region: ams3
+  resource_name: pyxis-bucket
+resize_gitlab:
+  droplet_name: gitlab-server
+  id: null
+  is_backed_up: false
+  size: s-4vcpu-8gb
