@@ -192,6 +192,6 @@ if __name__ == "__main__":
     with open("params.yaml", "r") as f:
         params = yaml.safe_load(f)
 
-    REGION = params["REGION"]
+    REGION = params["region"]
 
     main(params)

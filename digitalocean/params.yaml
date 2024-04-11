@@ -1,7 +1,7 @@
-REGION: ams3
+region: &region ams3
 gitlab_droplet_params:
   image: ubuntu-20-04-x64
-  region: ams3
+  region: *region
   resize_disk: false
   resource_name: gitlab-server
   size: s-4vcpu-8gb
@@ -24,7 +24,7 @@ outsystems_bucket_params:
   acl: private
   force_destroy: false
   name: outsystems-bucket
-  region: ams3
+  region: *region
   resource_name: outsystems-bucket
 pg_db_params:
   size: db-s-2vcpu-4gb
@@ -32,10 +32,6 @@ pyxis_bucket_params:
   acl: private
   force_destroy: false
   name: pyxis-bucket
-  region: ams3
+  region: *region
   resource_name: pyxis-bucket
-resize_gitlab:
-  droplet_name: gitlab-server
-  id: null
-  is_backed_up: false
-  size: s-4vcpu-8gb
+
