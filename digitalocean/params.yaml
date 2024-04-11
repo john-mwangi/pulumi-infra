@@ -34,4 +34,8 @@ pyxis_bucket_params:
   name: pyxis-bucket
   region: *region
   resource_name: pyxis-bucket
-
+resize_gitlab:
+  droplet_name: gitlab-server
+  id: null
+  is_backed_up: false
+  size: s-4vcpu-8gb
