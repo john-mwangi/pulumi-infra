@@ -17,7 +17,7 @@ gitlab_droplet_params:
 
     docker system prune --all -f
 
-    docker run -d -p 443:443 -p 80:80 -p 23:22 --name gitlab_instance gitlab/gitlab-ce:latest
+    docker run -d -p 443:443 -p 80:80 -p 23:22 -p 5050:5050 gitlab/gitlab-ce:latest
 
     '
 outsystems_bucket_params:
