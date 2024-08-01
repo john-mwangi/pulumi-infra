@@ -5,13 +5,12 @@ gitlab_droplet_params:
   resize_disk: false
   resource_name: gitlab-server
   size: s-4vcpu-8gb
-  user_data: '#!/bin/bash
-
-    sudo ufw allow http
+  user_data: "#!/bin/bash
 
     sudo ufw allow https
-
+    sudo ufw allow https
     sudo ufw allow OpenSSH
+    sudo ufw allow 5050,3000,12001:12099
 
     curl -fsSL https://get.docker.com/ | sh
 
@@ -19,7 +18,7 @@ gitlab_droplet_params:
 
     docker run -d -p 443:443 -p 80:80 -p 23:22 -p 5050:5050 gitlab/gitlab-ce:latest
 
-    '
+    "
 outsystems_bucket_params:
   acl: private
   force_destroy: false
