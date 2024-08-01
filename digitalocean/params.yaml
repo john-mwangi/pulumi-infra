@@ -5,6 +5,7 @@ gitlab_droplet_params:
   resize_disk: false
   resource_name: gitlab-server
   size: s-4vcpu-8gb
+  backups: true
   user_data: "#!/bin/bash
 
     sudo ufw allow https

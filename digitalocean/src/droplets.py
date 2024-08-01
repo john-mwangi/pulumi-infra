@@ -13,7 +13,10 @@ def create_droplet(kwargs: dict):
     kwargs: key-word arguments for Droplet params
     """
 
-    vm = do.Droplet(**kwargs)
+    vm = do.Droplet(
+        **kwargs,
+        opts=pulumi.ResourceOptions(retain_on_delete=True, protect=True)
+    )
 
     reserved_ip = do.ReservedIp(
         "reserved_ip",
