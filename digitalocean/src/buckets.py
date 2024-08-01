@@ -17,6 +17,7 @@ def create_bucket(bucket_params: dict):
     bucket_params: a dictionary of values to pass to do.SpacesBucket()
     """
 
+    # ref: https://www.pulumi.com/docs/concepts/resources/providers/ (doesnt seem to work)
     # ref: https://www.pulumi.com/registry/packages/digitalocean/api-docs/spacesbucket/
     bucket = do.SpacesBucket(**bucket_params)
 

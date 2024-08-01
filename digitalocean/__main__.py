@@ -3,12 +3,15 @@
 from functools import reduce
 
 from dotenv import load_dotenv
-
-load_dotenv()
-
 from src.buckets import create_bucket
 from src.databases import create_postgres_db_cluster
 from src.droplets import create_droplet, resize_droplet
+
+load_dotenv()
+
+# creating the config: https://www.pulumi.com/docs/cli/commands/pulumi_config/
+# creating an environment: https://www.pulumi.com/docs/cli/commands/pulumi_config_env/
+# https://www.pulumi.com/docs/cli/commands/pulumi_env/
 
 
 def main(main_params: dict):
