@@ -4,6 +4,8 @@ import pulumi_digitalocean as do
 
 import pulumi
 
+from src.options import opts
+
 
 def create_droplet(kwargs: dict):
     """Creates a virtual machine on Digital Ocean
@@ -15,7 +17,7 @@ def create_droplet(kwargs: dict):
 
     vm = do.Droplet(
         **kwargs,
-        opts=pulumi.ResourceOptions(retain_on_delete=True, protect=True)
+        opts=opts,
     )
 
     reserved_ip = do.ReservedIp(
