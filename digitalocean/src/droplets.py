@@ -1,10 +1,9 @@
 import os
 
 import pulumi_digitalocean as do
+from src.options import opts
 
 import pulumi
-
-from src.options import opts
 
 
 def create_droplet(kwargs: dict):
