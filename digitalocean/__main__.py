@@ -22,9 +22,10 @@ def main(main_params: dict):
     main_params: the parameters to use
     """
 
+    # ================================================
     # Create resources here...
     # ================================================
-    
+
     # VIRTUAL MACHINES
     create_droplet(kwargs=main_params.get("gitlab_droplet_params"))
 
