@@ -6,3 +6,4 @@ Steps:
 - Create resources: `$ pulumi up`
 - Refresh Pulumi after creating resources manually: `$ pulumi refresh`
 - If there is an error with pulumi refresh: `$ pulumi state delete`
+- Create an environment: `pulumi config env init`
