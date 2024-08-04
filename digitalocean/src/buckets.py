@@ -48,6 +48,8 @@ def create_bucket(bucket_params: dict):
     pulumi.export("bucket_domain", bucket.bucket_domain_name)
     pulumi.export("bucket_endpoint", bucket.endpoint)
 
+    return bucket, bucket_cors
+
 
 def import_bucket(bucket_name: str):
     """Imports a bucket into the Pulumi stack that was created via the Digital

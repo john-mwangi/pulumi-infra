@@ -36,3 +36,5 @@ def create_postgres_db_cluster(size: str):
     pulumi.export("db_name", crdb.name)
     pulumi.export("db_engine", pg13_cluster.engine)
     pulumi.export("db_version", pg13_cluster.version)
+
+    return pg13_cluster

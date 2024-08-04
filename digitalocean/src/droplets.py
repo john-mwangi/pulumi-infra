@@ -31,6 +31,8 @@ def create_droplet(kwargs: dict):
     pulumi.export("disk_size", vm.disk)
     pulumi.export("ram", vm.memory)
 
+    return vm, reserved_ip
+
 
 def resize_droplet(
     id: str, size: str, droplet_name: str, is_backed_up: bool = False
