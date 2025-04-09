@@ -1,0 +1,15 @@
+Arpeggio==2.0.2
+attrs==25.3.0
+debugpy==1.8.13
+dill==0.3.9
+grpcio==1.66.2
+parver==0.5
+pip==25.0.1
+protobuf==4.25.6
+pulumi==3.161.0
+pulumi_hcloud==1.22.0
+python-dotenv==1.1.0
+PyYAML==6.0.2
+semver==3.0.4
+setuptools==78.1.0
+wheel==0.45.1
