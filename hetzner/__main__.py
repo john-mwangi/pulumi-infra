@@ -25,6 +25,15 @@ server01 = Server(
         }
     ],
     opts=ResourceOptions(provider=hcloud),
+    user_data="""#!/bin/bash
+
+    sudo ufw allow https
+    sudo ufw allow https
+    sudo ufw allow OpenSSH
+    sudo ufw allow 5050,3000,12001:12099
+
+    curl -fsSL https://get.docker.com/ | sh
+    """,
 )
 
 pulumi.export("server_ip", server01.ipv4_address)
