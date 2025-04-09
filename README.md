@@ -1,6 +1,6 @@
 # Setup Hetzner Cloud with Pulumi
 
-1. Create a new Pulumi project
+**1. Create a new Pulumi project**
 
 Because Pulumi does not have a template for Hetzner Cloud, we will use a generic Python template to create a project.
 
@@ -8,7 +8,7 @@ Because Pulumi does not have a template for Hetzner Cloud, we will use a generic
 pulumi new python
 ```
 
-1. Authenticate with Hezner Cloud
+**2. Authenticate with Hezner Cloud**
 
 Assuming that your stack is called `dev`, authenticate with your token.
 
@@ -16,7 +16,7 @@ Assuming that your stack is called `dev`, authenticate with your token.
 pulumi config set dev:token XXX --secret
 ```
 
-3. Configure the project
+**3. Configure the project**
 
 Install Pulumi Hetzner's Python package and update`__main__.py` to define your infrastructure.
 
@@ -24,7 +24,7 @@ Install Pulumi Hetzner's Python package and update`__main__.py` to define your i
 pip install pulumi-hcloud
 ```
 
-4. Update the Pulumi virtual environment
+**4. Update the Pulumi virtual environment**
 
 This updates the Pulumi virtual environment with the requirements.txt
 
@@ -33,7 +33,7 @@ pip list --format=freeze > requirements.txt
 pulumi install
 ```
 
-5. Create the infrastructure
+**5. Create the infrastructure**
 
 ```bash
 pulumi preview
