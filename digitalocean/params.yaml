@@ -9,7 +9,7 @@ gitlab_droplet_params:
   user_data: "#!/bin/bash
 
     sudo ufw allow https
-    sudo ufw allow https
+    sudo ufw allow http
     sudo ufw allow OpenSSH
     sudo ufw allow 5050,3000,12001:12099
 

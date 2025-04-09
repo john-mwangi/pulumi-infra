@@ -6,7 +6,7 @@ from src.options import opts
 import pulumi
 
 
-def create_droplet(kwargs: dict):
+def create_droplet(kwargs: dict, reserved_ip: bool = True):
     """Creates a virtual machine on Digital Ocean
 
     Args:
@@ -19,11 +19,12 @@ def create_droplet(kwargs: dict):
         opts=opts,
     )
 
-    reserved_ip = do.ReservedIp(
-        "reserved_ip",
-        droplet_id=vm.id,
-        region=vm.region,
-    )
+    if reserved_ip:
+        reserved_ip = do.ReservedIp(
+            "reserved_ip",
+            droplet_id=vm.id,
+            region=vm.region,
+        )
 
     pulumi.export("vm_ip", vm.ipv4_address)
     pulumi.export("static_ip", reserved_ip.ip_address)

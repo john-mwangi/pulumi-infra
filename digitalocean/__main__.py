@@ -7,7 +7,8 @@ from dotenv import load_dotenv
 from src.buckets import create_bucket
 from src.databases import create_postgres_db_cluster
 from src.droplets import create_droplet, resize_droplet
-from src.projects import project as jmwangi
+from src.options import opts
+from src.projects import droplet as jmwangi_droplet
 
 load_dotenv()
 
@@ -32,6 +33,7 @@ def create_first_project(main_params: dict):
     gitlab_droplet, gitlab_ip = create_droplet(
         kwargs=main_params.get("gitlab_droplet_params")
     )
+    jmwangi_droplet
 
     droplet_to_resize = reduce(dict.get, ["resize_gitlab", "id"], main_params)
     if droplet_to_resize is not None:
@@ -65,10 +67,16 @@ def create_first_project(main_params: dict):
     #         os_cors.urn,
     #         py_bucket.bucket_urn,
     #         py_cors.urn,
+    #         do.Droplet(
+    #             "ukiyo-vm",
+    #             opts=opts,
+    #         ),
     #     ],
     # )
 
     # return project
+
+    return None
 
 
 if __name__ == "__main__":
@@ -80,4 +88,3 @@ if __name__ == "__main__":
     REGION = params["region"]
 
     create_first_project(params)
-    jmwangi

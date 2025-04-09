@@ -1,11 +1,5 @@
 import pulumi_digitalocean as do
-from dotenv import load_dotenv
-from src.buckets import create_bucket
-from src.databases import create_postgres_db_cluster
-from src.droplets import create_droplet, resize_droplet
 from src.options import opts
-
-load_dotenv()
 
 droplet = do.Droplet(
     resource_name="jmwangi-vm",
@@ -33,5 +27,4 @@ project = do.Project(
     environment="development",
     name="john-mwangi",
     purpose="development",
-    resources=[droplet.droplet_urn],
 )
