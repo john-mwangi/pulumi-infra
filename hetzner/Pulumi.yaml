@@ -1,5 +1,5 @@
 name: hetzner
-description: A minimal Python Pulumi program
+description: A stack for spinning Hetzner infrastructure
 runtime:
   name: python
   options:
