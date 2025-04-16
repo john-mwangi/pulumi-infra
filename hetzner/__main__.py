@@ -64,6 +64,7 @@ sudo systemctl status ssh
 
 sudo useradd -m -s /bin/bash {SSH_USER}
 echo "{SSH_USER}:{SSH_PWD}" | sudo chpasswd
+sudo usermod -aG sudo {SSH_USER}
 
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
