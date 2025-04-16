@@ -80,3 +80,6 @@ sudo systemctl start fail2ban
 )
 
 pulumi.export("server01_ip", server01.ipv4_address)
+
+with open("./README.md") as f:
+    pulumi.export("readme", f.read())
