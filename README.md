@@ -1,58 +1,9 @@
-# Setup Hetzner Cloud with Pulumi
+# About
+This is a repo for setting up cloud infrastructure as code using Pulumi. Refer
+to readmes in the sub-directories for detailed instructions on how to set up for
+various cloud service providers.
 
-**1. Create a new Pulumi project**
-
-Because Pulumi does not have a template for Hetzner Cloud, we will use a generic Python template to create a project.
-
-```bash
-pulumi new python
-```
-
-**2. Authenticate with Hezner Cloud**
-
-Assuming that your stack is called `dev`, authenticate with your token.
-
-```bash
-pulumi config set --secret dev:hetzner_token XXX
-# your fully-qualified stack name will be: pulumi-username/hetzner/dev
-```
-
-**3. Configure the project**
-
-Install Pulumi Hetzner's Python package and update`__main__.py` to define your infrastructure.
-
-```bash
-pip install pulumi-hcloud
-```
-
-**4. Update the Pulumi virtual environment**
-
-This updates the Pulumi virtual environment with the requirements.txt
-
-```bash
-pip list --format=freeze > requirements.txt
-pulumi install
-```
-
-**5. Create the infrastructure**
-
-```bash
-pulumi preview
-pulumi up
-```
-
-**6. Setting up SSH keys**
-```bash
-ssh-keygen -R <server-ip>
-ssh-copy-id -i ~/.ssh/id_rsa.pub <ssh-user>@<server-ip>
-ssh <ssh-user>@<server-ip>
-```
-
-# Setting up Digital Ocean
-- Export your Digital Ocean Token: `$ export DIGITALOCEAN_TOKEN=XXXX`
-- Alternative, create a config file: `pulumi config set digitalocean:token YOUR_TOKEN_HERE --secret`
-
-# Common commands
+## Common commands
 - `pulumi whoami` - Show the current user and organization.
 - `pulumi logout` - Log out of the current Pulumi account.
 - `pulumi login` - Log in to a Pulumi account.
@@ -79,12 +30,3 @@ ssh <ssh-user>@<server-ip>
 - `pulumi config refresh` - Refresh the configuration values for the current stack.
 - `pulumi config set-all` - Set multiple configuration values for the current stack.
 - `pulumi config rm-all` - Remove all configuration values for the current stack.
-
-# References
-* https://mclare.blog/posts/using-pulumi-with-hetzner/
-* https://docs.hetzner.com/cloud/api/getting-started/generating-api-token/
-* https://www.pulumi.com/registry/packages/hcloud/api-docs/server/
-* https://www.pulumi.com/docs/iac/languages-sdks/python/
-* https://community.hetzner.com/tutorials/security-ubuntu-settings-firewall-tools
-* https://community.hetzner.com/tutorials/basic-cloud-config
-* https://community.hetzner.com/tutorials/howto-ssh-key
