@@ -4,13 +4,12 @@ services:
     image: mongo
     restart: always
     env_file:
-      - ./.env
+      - ./mongo.env
     ports:
       - 27017:27017
     volumes:
       - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mongodb_data:/data/db
-
   mongo-express:
     container_name: mongo-express
     image: mongo-express
@@ -18,7 +17,19 @@ services:
     ports:
       - 8081:8081      
     env_file:
-      - ./.env
-
+      - ./mongo.env
+  open-webui:
+    ports:
+      - 8082:8080
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    volumes:
+      - open-webui:/app/backend/data
+    container_name: open-webui
+    restart: always
+    image: ghcr.io/open-webui/open-webui:main
+    env_file:
+      - ./openwebui.env
 volumes:
   mongodb_data:
+  open-webui:
