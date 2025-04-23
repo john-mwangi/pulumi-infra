@@ -20,14 +20,13 @@ services:
       - ./mongo.env
   open-webui:
     ports:
-      - 8082:8080
-    extra_hosts:
-      - host.docker.internal:host-gateway
+      - 3000:8080
     volumes:
       - open-webui:/app/backend/data
+      - ollama:/root/.ollama
     container_name: open-webui
     restart: always
-    image: ghcr.io/open-webui/open-webui:main
+    image: ghcr.io/open-webui/open-webui:ollama
     env_file:
       - ./openwebui.env
     environment:
@@ -38,3 +37,4 @@ services:
 volumes:
   mongodb_data:
   open-webui:
+  ollama:
