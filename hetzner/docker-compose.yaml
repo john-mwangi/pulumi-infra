@@ -15,7 +15,7 @@ services:
     image: mongo-express
     restart: always
     ports:
-      - 8081:8081      
+      - 8081:8081
     env_file:
       - ./env_files/mongo.env
   open-webui:
@@ -41,11 +41,13 @@ services:
   ollama:
     volumes:
       - ollama:/root/.ollama
+      - ./scripts/ollama_entrypoint.sh:/entrypoint.sh
     container_name: ollama
     pull_policy: always
     tty: true
     restart: unless-stopped
     image: ollama/ollama:latest
+    entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
 volumes:
   mongodb_data:
   open-webui:
