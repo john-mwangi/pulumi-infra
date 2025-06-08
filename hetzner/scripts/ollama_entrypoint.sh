@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Start Ollama in the background.
-/bin/ollama serve &
+OLLAMA_HOST=0.0.0.0 /bin/ollama serve &
 
 # Record Process ID.
 pid=$!
