@@ -48,6 +48,10 @@ services:
     restart: unless-stopped
     image: ollama/ollama:latest
     entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
+    ports:
+    - 11434:11434
+    extra_hosts:
+    - "host.docker.internal:host-gateway"
 volumes:
   mongodb_data:
   open-webui:
