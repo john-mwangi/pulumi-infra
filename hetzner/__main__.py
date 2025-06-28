@@ -13,7 +13,9 @@ SSH_PORT = os.environ["SSH_PORT"]
 SSH_USER = os.environ["SSH_USER"]
 SSH_PWD = os.environ["SSH_PWD"]
 ALLOWED_PORTS = os.environ["ALLOWED_PORTS"]
-ufw_allow = [f"sudo ufw allow {port.strip()}" for port in ALLOWED_PORTS.split(",")]
+ufw_allow = [
+    f"sudo ufw allow {port.strip()}" for port in ALLOWED_PORTS.split(",")
+]
 
 # pulumi config set --secret dev:hetzner_token XXX
 config = pulumi.Config(name="dev")
@@ -43,19 +45,19 @@ sudo apt-get update
 sudo apt-get upgrade
 
 sudo apt-get install -y ufw cron fail2ban
-    
-sed -i -e '/^\\(#\\|\\)PermitRootLogin/s/^.*$/PermitRootLogin no/' /etc/ssh/sshd_config
-sed -i -e '/^\\(#\\|\\)PasswordAuthentication/s/^.*$/PasswordAuthentication no/' /etc/ssh/sshd_config
-sed -i -e '/^\\(#\\|\\)PubkeyAuthentication/s/^.*$/PubkeyAuthentication yes/' /etc/ssh/sshd_config
-sed -i -e '/^\\(#\\|\\)Port/s/^.*$/Port {SSH_PORT}/' /etc/ssh/sshd_config
-sed -i -e '/^\\(#\\|\\)KbdInteractiveAuthentication/s/^.*$/KbdInteractiveAuthentication no/' /etc/ssh/sshd_config
-sed -i -e '/^\\(#\\|\\)ChallengeResponseAuthentication/s/^.*$/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
-# sed -i -e '/^\\(#\\|\\)MaxAuthTries/s/^.*$/MaxAuthTries 2/' /etc/ssh/sshd_config
-sed -i -e '/^\\(#\\|\\)AllowTcpForwarding/s/^.*$/AllowTcpForwarding yes/' /etc/ssh/sshd_config
-sed -i -e '/^\\(#\\|\\)GatewayPorts/s/^.*$/GatewayPorts yes/' /etc/ssh/sshd_config
-sed -i -e '/^\\(#\\|\\)X11Forwarding/s/^.*$/X11Forwarding no/' /etc/ssh/sshd_config
-sed -i -e '/^\\(#\\|\\)AllowAgentForwarding/s/^.*$/AllowAgentForwarding no/' /etc/ssh/sshd_config
-sed -i -e '/^\\(#\\|\\)AuthorizedKeysFile/s/^.*$/AuthorizedKeysFile .ssh/authorized_keys/' /etc/ssh/sshd_config
+
+sed -i -e 's/^#*PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config
+sed -i -e 's/^#*PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config
+sed -i -e 's/^#*PubkeyAuthentication .*/PubkeyAuthentication yes/' /etc/ssh/sshd_config
+sed -i -e 's/^#*Port .*/Port {SSH_PORT}/' /etc/ssh/sshd_config
+sed -i -e 's/^#*KbdInteractiveAuthentication .*/KbdInteractiveAuthentication no/' /etc/ssh/sshd_config
+sed -i -e 's/^#*ChallengeResponseAuthentication .*/ChallengeResponseAuthentication no/' /etc/ssh/sshd_config
+# sed -i -e 's/^#*MaxAuthTries .*/MaxAuthTries 2/' /etc/ssh/sshd_config
+sed -i -e 's/^#*AllowTcpForwarding .*/AllowTcpForwarding yes/' /etc/ssh/sshd_config
+sed -i -e 's/^#*GatewayPorts .*/GatewayPorts yes/' /etc/ssh/sshd_config
+sed -i -e 's/^#*X11Forwarding .*/X11Forwarding no/' /etc/ssh/sshd_config
+sed -i -e 's/^#*AllowAgentForwarding .*/AllowAgentForwarding no/' /etc/ssh/sshd_config
+sed -i -e 's/^#*AuthorizedKeysFile .*/AuthorizedKeysFile .ssh\\/authorized_keys .ssh\\/authorized_keys2/' /etc/ssh/sshd_config
 sed -i '$a AllowUsers {SSH_USER}' /etc/ssh/sshd_config
 
 sudo systemctl stop ssh.socket
