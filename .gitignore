@@ -5,3 +5,6 @@ __pycache__
 *dev.yaml
 *prod.yaml
 *.bak
+ssh_config*
+sshd_config*
+hetzner/update_ssh.sh
