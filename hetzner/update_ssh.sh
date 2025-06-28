@@ -1,0 +1,9 @@
+sed -i -e 's/^# *PermitRootLogin yes/\#   PermitRootLogin no/' ~/Desktop/ssh_config_test.txt
+sed -i -e 's/^# *PasswordAuthentication yes/\#   PasswordAuthentication no/' ~/Desktop/ssh_config_test.txt
+sed -i -e 's/^# *PubkeyAuthentication no/\#   PubkeyAuthentication yes/' ~/Desktop/ssh_config_test.txt
+sed -i -e 's/^# *KbdInteractiveAuthentication yes/\#   KbdInteractiveAuthentication no/' ~/Desktop/ssh_config_test.txt
+sed -i -e 's/^# *ChallengeResponseAuthentication yes/\#   ChallengeResponseAuthentication no/' ~/Desktop/ssh_config_test.txt
+sed -i -e 's/^# *AllowTcpForwarding no/\#   AllowTcpForwarding yes/' ~/Desktop/ssh_config_test.txt
+sed -i -e 's/^# *GatewayPorts no/\#   GatewayPorts yes/' ~/Desktop/ssh_config_test.txt
+sed -i -e 's/^# *ForwardX11 yes/\#   ForwardX11 no/' ~/Desktop/ssh_config_test.txt
+sed -i -e 's/^# *AllowAgentForwarding yes/\#   AllowAgentForwarding no/' ~/Desktop/ssh_config_test.txt
