@@ -48,6 +48,16 @@ ssh-copy-id -i ~/.ssh/id_rsa.pub <ssh-user>@<server-ip>
 ssh <ssh-user>@<server-ip>
 ```
 
+# Copying from remote to local
+
+```bash
+du -sh /var/lib/docker/volumes/containerdir  # check size
+cp -r /var/lib/docker/volumes/containerdir /tmp/containerdir
+chown -R <ssh-user>:root /tmp/containerdir
+rsync -avz -e 'ssh' <ssh-user>@<server-ip>:/tmp/containerdir /path/to/local/destination
+scp -r <ssh-user>@<server-ip>:/tmp/containerdir /path/to/local/destination # slower alternative
+```
+
 # References
 * https://mclare.blog/posts/using-pulumi-with-hetzner/
 * https://docs.hetzner.com/cloud/api/getting-started/generating-api-token/
