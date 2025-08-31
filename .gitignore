@@ -8,3 +8,4 @@ __pycache__
 ssh_config*
 sshd_config*
 hetzner/update_ssh.sh
+backups

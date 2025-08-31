@@ -1,3 +1,8 @@
+"""This script tests the server's updated init script for the SSH configuration
+by first backing up the existing sshd_config file, then creating a new one with
+the updated bash code, and comparing the two files to ensure they are identical.
+"""
+
 import filecmp
 import os
 import subprocess
