@@ -42,6 +42,7 @@ pulumi up
 ```
 
 **6. Setting up SSH keys**
+
 ```bash
 ssh-keygen -R <server-ip>
 ssh-copy-id -i ~/.ssh/id_rsa.pub <ssh-user>@<server-ip>
@@ -58,6 +59,15 @@ chown -R <ssh-user>:root /tmp/containerdir
 rsync -avz -e 'ssh' <ssh-user>@<server-ip>:/tmp/containerdir /path/to/local/destination --progress
 scp -r <ssh-user>@<server-ip>:/tmp/containerdir /path/to/local/destination # slower alternative
 ```
+
+# Projects
+
+Servers, Volumes, Networks, Firewalls, Load Balancers, Floating IPs, etc are 
+created in a Hetzner Project. These projects have to be created manually in the
+Hetzner Cloud Console.
+
+Once the project exists, you can use Pulumi to manage resources inside that 
+project by specifying the appropriate API token associated with the project.
 
 # References
 * https://mclare.blog/posts/using-pulumi-with-hetzner/
