@@ -30,7 +30,7 @@ server01 = Server(
     delete_protection=True,
     rebuild_protection=True,
     keep_disk=True,
-    location="fsn1",
+    location="nbg1",
     public_nets=[
         {
             "ipv4_enabled": True,

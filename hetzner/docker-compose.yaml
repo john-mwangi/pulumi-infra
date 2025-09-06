@@ -2,7 +2,7 @@ services:
   mongodb:
     container_name: mongodb
     image: mongo
-    restart: always
+    restart: unless-stopped
     env_file:
       - ./env_files/mongo.env
     ports:
@@ -13,7 +13,7 @@ services:
   mongo-express:
     container_name: mongo-express
     image: mongo-express
-    restart: always
+    restart: unless-stopped
     ports:
       - 8091:8081
     env_file:
@@ -49,9 +49,9 @@ services:
     image: ollama/ollama:latest
     entrypoint: ["/usr/bin/bash", "/entrypoint.sh"]
     ports:
-    - 11434:11434
+      - 11434:11434
     extra_hosts:
-    - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
 volumes:
   mongodb_data:
   open-webui:
