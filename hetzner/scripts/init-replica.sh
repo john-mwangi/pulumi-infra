@@ -1,11 +1,34 @@
 #!/bin/bash
 
-# Start MongoDB in the background
-mongod --config /etc/mongod.conf &
+# Start MongoDB in the background WITHOUT authentication first
+mongod --config /etc/mongod.conf --noauth &
 MONGOD_PID=$!
 
 # Wait for MongoDB to start
 echo "Waiting for MongoDB to start..."
+sleep 10
+
+# Check if this is the first run (no admin user exists)
+user_exists=$(mongosh admin --eval "db.getUser('$MONGO_INITDB_ROOT_USERNAME')" --quiet 2>/dev/null | grep -c "null")
+
+if [ "$user_exists" -eq "1" ] || [ -z "$user_exists" ]; then
+  echo "First run detected - creating admin user and databases..."
+  
+  # Run the mongo-init.js script
+  mongosh < /docker-entrypoint-initdb.d/mongo-init.js
+  
+  echo "Databases and users created"
+fi
+
+# Now restart MongoDB with authentication
+echo "Restarting MongoDB with authentication..."
+mongod --shutdown
+wait $MONGOD_PID
+
+mongod --config /etc/mongod.conf &
+MONGOD_PID=$!
+
+echo "Waiting for MongoDB to restart..."
 sleep 10
 
 # Check if replica set is already initialized
@@ -18,5 +41,5 @@ else
   echo "Replica set already initiated"
 fi
 
-# Keep the container running and forward signals
+# Keep the container running
 wait $MONGOD_PID
