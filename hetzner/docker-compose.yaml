@@ -1,6 +1,6 @@
 services:
-  mongodb:
-    container_name: mongodb
+  mongodb_new:
+    container_name: mongodb_new
     image: mongo
     restart: unless-stopped
     env_file:
@@ -9,9 +9,21 @@ services:
       - 27017:27017
     volumes:
       - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - mongodb_data_new:/data/db
+      - ./mongodb-keyfile:/etc/mongodb/mongodb-keyfile:ro
+      - ./mongod.conf:/etc/mongod.conf
+    command: ["mongod","--config","/etc/mongod.conf"]
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    restart: unless-stopped
+    env_file:
+      - ./env_files/mongodb.env
+    ports:
+      - 27018:27017
+    volumes:
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
       - mongodb_data:/data/db
-      - ./mongodb-keyfile:/etc/mongo/mongodb-keyfile:ro
-    command: --replSet "rs0" --keyFile /etc/mongo/mongodb-keyfile
   mongo-express:
     container_name: mongo-express
     image: mongo-express
@@ -59,3 +71,4 @@ volumes:
   mongodb_data:
   open-webui:
   ollama:
+  mongodb_data_new:
