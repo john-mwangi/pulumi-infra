@@ -13,7 +13,7 @@ rs_status=$(mongosh -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASS
 
 if [ "$rs_status" != "1" ]; then
   echo "Initiating replica set..."
-  mongosh -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval 'rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "91.99.227.30:27017" }]})'
+  mongosh -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD" --authenticationDatabase admin --eval "rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: '$MONGO_RS_HOST' }]})"
 else
   echo "Replica set already initiated"
 fi
