@@ -1,6 +1,6 @@
 services:
-  mongodb_new:
-    container_name: mongodb_new
+  mongodb_rs:
+    container_name: mongodb_rs
     image: mongo
     restart: unless-stopped
     env_file:
@@ -9,10 +9,11 @@ services:
       - 27017:27017
     volumes:
       - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - mongodb_data_new:/data/db
+      - mongodb_data_rs:/data/db
       - ./mongodb-keyfile:/etc/mongodb/mongodb-keyfile:ro
       - ./mongod.conf:/etc/mongod.conf
-    command: ["mongod","--config","/etc/mongod.conf"]
+      - ./scripts/init-replica.sh:/init-replica.sh:ro
+    entrypoint: ["/bin/bash", "/init-replica.sh"]
   mongodb:
     container_name: mongodb
     image: mongo
@@ -33,7 +34,7 @@ services:
     ports:
       - 8081:8081
     depends_on:
-      mongodb:
+      mongodb_rs:
         condition: service_started
   open-webui:
     image: ghcr.io/open-webui/open-webui:main
@@ -71,4 +72,4 @@ volumes:
   mongodb_data:
   open-webui:
   ollama:
-  mongodb_data_new:
+  mongodb_data_rs:
